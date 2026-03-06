@@ -1,10 +1,59 @@
 "use client";
 
 import AuthLayout from "@/components/AuthLayout";
-import { LogIn, Mail, Lock } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const [formData, setFormData] = useState({
+        email: "",
+        password: ""
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError("");
+
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/auth/login` : 'http://localhost:3002/auth/login';
+
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || 'Credenciais inválidas');
+            }
+
+            const data = await res.json();
+
+            // Store token
+            localStorage.setItem("homeia_token", data.access_token);
+            localStorage.setItem("homeia_user", JSON.stringify(data.user));
+
+            window.location.href = "/generate";
+
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <AuthLayout>
             <div className="text-center mb-10">
@@ -12,14 +61,24 @@ export default function LoginPage() {
                 <p className="text-slate-400">Acesse sua conta na plataforma Homeia</p>
             </div>
 
-            <form className="space-y-6">
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-medium p-3 rounded-lg text-center mb-6">
+                    {error}
+                </div>
+            )}
+
+            <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-300 ml-1">Email</label>
                     <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
                         <input
                             type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="seu@email.com"
+                            required
                             className="w-full bg-slate-800/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500/50 transition-all"
                         />
                     </div>
@@ -36,7 +95,11 @@ export default function LoginPage() {
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
                         <input
                             type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             placeholder="••••••••"
+                            required
                             className="w-full bg-slate-800/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500/50 transition-all"
                         />
                     </div>
@@ -44,10 +107,11 @@ export default function LoginPage() {
 
                 <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-4 rounded-2xl shadow-lg shadow-cyan-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-4 rounded-2xl shadow-lg shadow-cyan-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
                 >
-                    <LogIn className="w-5 h-5" />
-                    Entrar na Plataforma
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
+                    {isLoading ? "Entrando..." : "Entrar na Plataforma"}
                 </button>
             </form>
 
