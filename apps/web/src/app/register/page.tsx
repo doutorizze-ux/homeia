@@ -29,10 +29,7 @@ export default function RegisterPage() {
         setError("");
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/auth/register` : 'http://localhost:3002/auth/register';
-            console.log("Submitting to:", apiUrl);
-
-            const res = await fetch(apiUrl, {
+            const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
