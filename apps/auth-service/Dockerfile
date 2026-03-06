@@ -1,4 +1,6 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
+# Prisma needs openssl on minimal debian/ubuntu bases
+RUN apt-get update -y && apt-get install -y openssl
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -8,7 +10,8 @@ RUN npx prisma generate
 FROM base AS build
 RUN npm run build
 
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
+RUN apt-get update -y && apt-get install -y openssl
 WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/dist ./dist
