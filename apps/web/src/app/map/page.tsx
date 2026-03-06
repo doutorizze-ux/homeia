@@ -9,6 +9,7 @@ import {
     ChevronRight,
     MapPin
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const TERRENOS = [
     { id: 1, name: 'Loteamento Jd. das Flores', price: 'R$ 1.200/m²', trend: '+12%', type: 'Residencial' },

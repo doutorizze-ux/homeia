@@ -28,7 +28,7 @@ export default function LoginPage() {
                 <div className="space-y-2">
                     <div className="flex justify-between items-center px-1">
                         <label className="text-sm font-medium text-slate-300">Senha</label>
-                        <Link href="/forgot-password" size="sm" className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
+                        <Link href="/forgot-password" className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
                             Esqueceu?
                         </Link>
                     </div>
