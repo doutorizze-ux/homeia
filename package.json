@@ -1,0 +1,31 @@
+{
+  "name": "homeia-platform",
+  "version": "1.0.0",
+  "description": "Plataforma SaaS revolucionária para engenharia e arquitetura",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "dev:auth": "npm run start:dev -w apps/auth-service",
+    "dev:project": "npm run start:dev -w apps/project-service",
+    "dev:gateway": "npm run start:dev -w apps/api-gateway",
+    "dev:all": "concurrently \"npm run dev:web\" \"npm run dev:auth\" \"npm run dev:project\" \"npm run dev:gateway\"",
+    "build": "npm run build --workspaces",
+    "infra:up": "docker-compose up -d",
+    "infra:down": "docker-compose down"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@nestjs/config": "^4.0.3",
+    "axios": "^1.13.6"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
