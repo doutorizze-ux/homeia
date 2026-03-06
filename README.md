@@ -1,6 +1,6 @@
-# 🏠 HOMEIA — MVP EXECUTÁVEL
+# 🏠 HOMEIA — PLATAFORMA SAAS REVOLUCIONÁRIA
 
-Bem-vindo ao MVP da plataforma Homeia. Este guia contém todas as instruções para rodar o sistema completo localmente.
+Repositório: [https://github.com/doutorizze-ux/homeia](https://github.com/doutorizze-ux/homeia)
 
 ---
 
