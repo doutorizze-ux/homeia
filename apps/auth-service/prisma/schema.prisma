@@ -1,1 +1,32 @@
-generator client { provider = "prisma-client-js" }`ndatasource db { provider = "postgresql"; url = env("DATABASE_URL") }`n`nenum UserRole { ADMIN, CLIENT, ENGINEER, ARCHITECT }`nenum PlanType { FREE, PROFESSIONAL, CORPORATE }`n`nmodel User {`n  id String @id @default(uuid())`n  email String @unique`n  password String`n  name String`n  role UserRole @default(CLIENT)`n  plan PlanType @default(FREE)`n  isVerified Boolean @default(false)`n  createdAt DateTime @default(now())`n}
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  ENGINEER
+  ARCHITECT
+}
+
+enum PlanType {
+  FREE
+  PROFESSIONAL
+  CORPORATE
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String
+  role       UserRole @default(CLIENT)
+  plan       PlanType @default(FREE)
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
