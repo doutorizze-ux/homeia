@@ -34,6 +34,11 @@ export default function GeneratePage() {
                 })
             });
 
+            if (!res.ok) {
+                console.error("API Error Response:", await res.text());
+                throw new Error("Erro 500 ou Server Offline. Chave da API Gemini configurada corretamente no seu Coolify?");
+            }
+
             const text = await res.text();
             let jsonStr = text;
             const match = text.match(/```json\n([\s\S]*?)\n```/);
@@ -41,14 +46,26 @@ export default function GeneratePage() {
 
             try {
                 const data = JSON.parse(jsonStr);
-                setLayoutData(data?.walls ? data : { walls: data });
+
+                // Validação de segurança pesada para nunca quebrar o React Fiber
+                let finalWalls = [];
+                if (Array.isArray(data?.walls)) {
+                    finalWalls = data.walls;
+                } else if (Array.isArray(data)) {
+                    finalWalls = data;
+                } else {
+                    console.error("JSON parseado mas formato inválido:", data);
+                    throw new Error("A IA não retornou um Array de Paredes válido.");
+                }
+
+                setLayoutData({ walls: finalWalls });
             } catch (e) {
-                console.error("Falha ao analisar a resposta da IA. Retorno:", text);
-                alert("A IA retornou um formato inesperado. Tente gerar novamente.");
+                console.error("Falha ao analisar a resposta da IA. Retorno original:", text);
+                alert("O formato gerado não foi compreendido pelo Motor 3D. Tente novamente ou verifique os logs.");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Erro ao gerar projeto:", error);
-            alert("Erro de comunicação com o servidor de IA.");
+            alert("Erro de IA: " + (error?.message || "Servidor offline ou sem chave API."));
         } finally {
             setLoading(false);
         }
