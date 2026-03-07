@@ -9,7 +9,8 @@ export class AIProjectService {
     try {
       console.log("Tentando gerar projeto com IA. Params:", params);
       console.log("Variável GEMINI_API_KEY possui", process.env.GEMINI_API_KEY?.length, "caracteres.");
-      const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Usando 'gemini-1.5-pro' estável
+      // Trocado para flash pois o modelo gemini-1.5-pro não é reconhecido no SDK deles/versão atual
+      const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `Atue como um Arquiteto 3D e gere um layout de planta baixa para um terreno de ${params.terrenoSize}m², com ${params.bedrooms} quartos e ${params.bathrooms} banheiros (${params.style}).
 Você DEVE retornar APENAS um objeto JSON com formato estrito (sem formatação markdown envolta se possível, e compatível com R3F e Three.js).
 O JSON deve obedecer à estrutura:
