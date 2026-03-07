@@ -16,5 +16,6 @@ WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/prisma ./prisma
 EXPOSE 3002
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/main"]
