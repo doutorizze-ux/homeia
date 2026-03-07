@@ -35,8 +35,17 @@ export default function GeneratePage() {
             });
 
             if (!res.ok) {
-                console.error("API Error Response:", await res.text());
-                throw new Error("Erro 500 ou Server Offline. Chave da API Gemini configurada corretamente no seu Coolify?");
+                const errText = await res.text();
+                // Tenta extrair a mensagem amigável que o backend envia (NestJS HttpException)
+                let errMsg = "Erro 500. Servidor Offline ou sem chave de API.";
+                try {
+                    const parsed = JSON.parse(errText);
+                    if (parsed.message) errMsg = parsed.message;
+                } catch {
+                    errMsg = errText;
+                }
+                console.error("API Error Response:", errText);
+                throw new Error(errMsg);
             }
 
             const text = await res.text();
