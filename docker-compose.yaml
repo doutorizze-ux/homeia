@@ -92,6 +92,8 @@ services:
     ports: [ "3001:3000" ]
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
     networks: [ homeia-network ]
 
 networks:
