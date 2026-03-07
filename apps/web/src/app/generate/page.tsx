@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
     Maximize,
@@ -20,16 +20,6 @@ export default function GeneratePage() {
     const [banheiros, setBanheiros] = useState("2");
     const [layoutData, setLayoutData] = useState<any>(null);
 
-    // Esconde os avisos irrelevantes do R3F no console que assustam o usuário
-    useEffect(() => {
-        const originalWarn = console.warn;
-        console.warn = (...args) => {
-            if (typeof args[0] === 'string' && args[0].includes('THREE.')) return;
-            originalWarn(...args);
-        };
-        return () => { console.warn = originalWarn; };
-    }, []);
-
     const handleGenerate = async () => {
         setLoading(true);
         try {
@@ -45,15 +35,12 @@ export default function GeneratePage() {
             });
 
             const text = await res.text();
-            // Tenta extrair JSON puro ou JSON de dentro de Markdown ```json ... ```
             let jsonStr = text;
             const match = text.match(/```json\n([\s\S]*?)\n```/);
             if (match) jsonStr = match[1];
 
             try {
                 const data = JSON.parse(jsonStr);
-                // Opcional: converte o retorno da IA se não vier com .walls
-                // Assumimos que o retorno tem { walls: [ { pos: [], args: []} ] }
                 setLayoutData(data?.walls ? data : { walls: data });
             } catch (e) {
                 console.error("Falha ao analisar a resposta da IA. Retorno:", text);
@@ -133,6 +120,22 @@ export default function GeneratePage() {
                     {/* Visualizador / Preview */}
                     <div className="lg:col-span-8 flex flex-col gap-6">
                         <BIMViewer layout={layoutData} />
+
+                        <div className="bg-slate-900 border border-white/5 rounded-3xl p-8">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold flex items-center gap-3">
+                                    <Layers className="w-6 h-6 text-cyan-400" /> Camadas Técnicas
+                                </h3>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {['Arquitetônico', 'Estrutural', 'Elétrico', 'Hidráulico'].map(layer => (
+                                    <button key={layer} className="p-4 bg-slate-800/50 border border-white/5 rounded-2xl hover:bg-slate-800 transition-colors text-center group">
+                                        <div className="w-8 h-8 bg-slate-700 rounded-lg mx-auto mb-3 group-hover:bg-cyan-600 transition-colors" />
+                                        <span className="text-xs font-medium text-slate-300">{layer}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
